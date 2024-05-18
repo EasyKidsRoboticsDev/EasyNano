@@ -354,6 +354,9 @@ void lineCross(int setSpeed, float iKP, float iKD)
       lineFollow(setSpeed, iKP, iKD);
     }
   }
+  Motor_L(setSpeed);
+  Motor_R(setSpeed);
+  delay(map(setSpeed, 0, 100, 100, 0));
   Motor_L(0);
   Motor_R(0);
 }
@@ -391,6 +394,9 @@ void lineFork(int setSpeed, float iKP, float iKD)
       lineFollow(setSpeed, iKP, iKD);
     }
   }
+  Motor_L(setSpeed);
+  Motor_R(setSpeed);
+  delay(map(setSpeed, 0, 100, 100, 0));
   Motor_L(0);
   Motor_R(0);
 }
@@ -434,6 +440,9 @@ void line90Left(int setSpeed, float iKP, float iKD)
       lineFollow(setSpeed, iKP, iKD);
     }
   }
+  Motor_L(setSpeed);
+  Motor_R(setSpeed);
+  delay(map(setSpeed, 0, 100, 100, 0));
   Motor_L(0);
   Motor_R(0);
 }
@@ -477,6 +486,9 @@ void line90Right(int setSpeed, float iKP, float iKD)
       lineFollow(setSpeed, iKP, iKD);
     }
   }
+  Motor_L(setSpeed);
+  Motor_R(setSpeed);
+  delay(map(setSpeed, 0, 100, 100, 0));
   Motor_L(0);
   Motor_R(0);
 }
@@ -488,9 +500,9 @@ void lineTurnLeft(int speedM)
     return;
   }
 
-  Motor_L(-speedM);
-  Motor_R(speedM);
-  delay(70);
+  // Motor_L(-speedM);
+  // Motor_R(speedM);
+  // delay(70);
   if (invertedLine)
   {
     do
@@ -518,9 +530,9 @@ void lineTurnRight(int speedM)
     return;
   }
 
-  Motor_L(speedM);
-  Motor_R(-speedM);
-  delay(70);
+  // Motor_L(speedM);
+  // Motor_R(-speedM);
+  // delay(70);
   if (invertedLine)
   {
     do
