@@ -6,17 +6,17 @@
 
   EasyKids_Setup();
 
-  sensorNum(7); // Only 2 & 7 available
+  sensorNum(8); // Only 2 & 8 available
 
   // Example: 2 Sensors
   sensorNum(2);
   setSensorMin(s0, s1);
   setSensorMax(s0, s1);
 
-  // Example: 7 Sensors
-  sensorNum(7);
-  setSensorMin(s0, s1, s2, s3, s4, s5, s6);
-  setSensorMax(s0, s1, s2, s3, s4, s5, s6);
+  // Example: 8 Sensors
+  sensorNum(8);
+  setSensorMin(s0, s1, s2, s3, s4, s5, s6, s7);
+  setSensorMax(s0, s1, s2, s3, s4, s5, s6, s7);
 
   blackLine();
   whiteLine();
@@ -39,16 +39,16 @@ void setup()
 {
   EasyKids_Setup();
 
-  sensorNum(7); // Only 2 & 7 available
+  sensorNum(8); // Only 2 & 8 available
   blackLine();
 
-  setSensorMin(0, 0, 0, 0, 0, 0, 0);
-  setSensorMax(1023, 1023, 1023, 1023, 1023, 1023, 1023);
+  setSensorMin(0, 0, 0, 0, 0, 0, 0, 0);
+  setSensorMax(1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023);
 }
 
 void loop()
 {
-  // readSensor();  //Show Value 7 Sensor via LCD Display
+  // readSensor();  //Show value 8 Sensor via Serial monitor
 
   waitForStart();
 

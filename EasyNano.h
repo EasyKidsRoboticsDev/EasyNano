@@ -6,12 +6,12 @@
 #define dir2B 8
 #define pwm2 6
 
-int NumSensor = 7;
+int NumSensor = 8;
 bool invertedLine = false;
 
-int sensorPin[7] = {A0, A1, A2, A3, A4, A5, A6};
-int Sensor_Min[] = {0, 0, 0, 0, 0, 0, 0};
-int Sensor_Max[] = {1023, 1023, 1023, 1023, 1023, 1023, 1023};
+int sensorPin[8] = { A0, A1, A2, A3, A4, A5, A6, A7 };
+int Sensor_Min[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+int Sensor_Max[8] = {1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023};
 
 uint16_t setPoint = (NumSensor - 1) * 100 / 2;
 uint16_t lastPosition = (NumSensor - 1) * 100 / 2;
@@ -193,7 +193,7 @@ void digitalOut(uint8_t pin, uint8_t output)
   digitalWrite(pin, output);
 }
 
-void setSensorMin(int s0, int s1, int s2 = 0, int s3 = 0, int s4 = 0, int s5 = 0, int s6 = 0)
+void setSensorMin(int s0, int s1, int s2 = 0, int s3 = 0, int s4 = 0, int s5 = 0, int s6 = 0, int s7 = 0)
 {
   Sensor_Min[0] = s0;
   Sensor_Min[1] = s1;
@@ -202,9 +202,10 @@ void setSensorMin(int s0, int s1, int s2 = 0, int s3 = 0, int s4 = 0, int s5 = 0
   Sensor_Min[4] = s4;
   Sensor_Min[5] = s5;
   Sensor_Min[6] = s6;
+  Sensor_Min[7] = s7;
 }
 
-void setSensorMax(int s0, int s1, int s2 = 1023, int s3 = 1023, int s4 = 1023, int s5 = 1023, int s6 = 1023)
+void setSensorMax(int s0, int s1, int s2 = 1023, int s3 = 1023, int s4 = 1023, int s5 = 1023, int s6 = 1023, int s7 = 1023)
 {
   Sensor_Max[0] = s0;
   Sensor_Max[1] = s1;
@@ -213,11 +214,12 @@ void setSensorMax(int s0, int s1, int s2 = 1023, int s3 = 1023, int s4 = 1023, i
   Sensor_Max[4] = s4;
   Sensor_Max[5] = s5;
   Sensor_Max[6] = s6;
+  Sensor_Max[7] = s7;
 }
 
 void sensorNum(int num)
 {
-  if (num != 2 && num != 7)
+  if (num != 2 && num != 8)
   {
     return;
   }
@@ -325,23 +327,23 @@ void lineTimer(int speed, float iKP, float iKD, long setTime)
 
 void lineCross(int setSpeed, float iKP, float iKD)
 {
-  if (NumSensor < 7)
+  if (NumSensor < 8)
   {
     return;
   }
 
-  int rightVal = analogRead(sensorPin[0]);
-  int leftVal = analogRead(sensorPin[NumSensor - 1]);
+  int rightVal = analogRead(sensorPin[1]);
+  int leftVal = analogRead(sensorPin[NumSensor - 2]);
 
-  int avgRightVal = (Sensor_Max[0] + Sensor_Min[0]) / 2;
-  int avgLeftVal = (Sensor_Max[NumSensor - 1] + Sensor_Min[NumSensor - 1]) / 2;
+  int avgRightVal = (Sensor_Max[1] + Sensor_Min[1]) / 2;
+  int avgLeftVal = (Sensor_Max[NumSensor - 2] + Sensor_Min[NumSensor - 2]) / 2;
 
   if (invertedLine)
   {
     while (rightVal < avgRightVal || leftVal < avgLeftVal)
     {
-      rightVal = analogRead(sensorPin[0]);
-      leftVal = analogRead(sensorPin[NumSensor - 1]);
+      rightVal = analogRead(sensorPin[1]);
+      leftVal = analogRead(sensorPin[NumSensor - 2]);
       lineFollow(setSpeed, iKP, iKD);
     }
   }
@@ -349,8 +351,8 @@ void lineCross(int setSpeed, float iKP, float iKD)
   {
     while (rightVal > avgRightVal || leftVal > avgLeftVal)
     {
-      rightVal = analogRead(sensorPin[0]);
-      leftVal = analogRead(sensorPin[NumSensor - 1]);
+      rightVal = analogRead(sensorPin[1]);
+      leftVal = analogRead(sensorPin[NumSensor - 2]);
       lineFollow(setSpeed, iKP, iKD);
     }
   }
@@ -363,23 +365,23 @@ void lineCross(int setSpeed, float iKP, float iKD)
 
 void lineFork(int setSpeed, float iKP, float iKD)
 {
-  if (NumSensor < 7)
+  if (NumSensor < 8)
   {
     return;
   }
 
-  int outerRightVal = analogRead(sensorPin[0]);
-  int outerLeftVal = analogRead(sensorPin[NumSensor - 1]);
+  int outerRightVal = analogRead(sensorPin[1]);
+  int outerLeftVal = analogRead(sensorPin[NumSensor - 2]);
 
-  int avgOuterRightVal = (Sensor_Max[0] + Sensor_Min[0]) / 2;
-  int avgOuterLeftVal = (Sensor_Max[NumSensor - 1] + Sensor_Min[NumSensor - 1]) / 2;
+  int avgOuterRightVal = (Sensor_Max[1] + Sensor_Min[1]) / 2;
+  int avgOuterLeftVal = (Sensor_Max[NumSensor - 2] + Sensor_Min[NumSensor - 2]) / 2;
 
   if (invertedLine)
   {
     while (outerRightVal < avgOuterRightVal || outerLeftVal < avgOuterLeftVal)
     {
-      outerRightVal = analogRead(sensorPin[0]);
-      outerLeftVal = analogRead(sensorPin[NumSensor - 1]);
+      outerRightVal = analogRead(sensorPin[1]);
+      outerLeftVal = analogRead(sensorPin[NumSensor - 2]);
 
       lineFollow(setSpeed, iKP, iKD);
     }
@@ -388,8 +390,8 @@ void lineFork(int setSpeed, float iKP, float iKD)
   {
     while (outerRightVal > avgOuterRightVal || outerLeftVal > avgOuterLeftVal)
     {
-      outerRightVal = analogRead(sensorPin[0]);
-      outerLeftVal = analogRead(sensorPin[NumSensor - 1]);
+      outerRightVal = analogRead(sensorPin[1]);
+      outerLeftVal = analogRead(sensorPin[NumSensor - 2]);
 
       lineFollow(setSpeed, iKP, iKD);
     }
@@ -403,7 +405,7 @@ void lineFork(int setSpeed, float iKP, float iKD)
 
 void line90Left(int setSpeed, float iKP, float iKD)
 {
-  if (NumSensor < 7)
+  if (NumSensor < 8)
   {
     return;
   }
@@ -449,7 +451,7 @@ void line90Left(int setSpeed, float iKP, float iKD)
 
 void line90Right(int setSpeed, float iKP, float iKD)
 {
-  if (NumSensor < 7)
+  if (NumSensor < 8)
   {
     return;
   }
@@ -495,14 +497,14 @@ void line90Right(int setSpeed, float iKP, float iKD)
 
 void lineTurnLeft(int speedM)
 {
-  if (NumSensor < 7)
+  if (NumSensor < 8)
   {
     return;
   }
 
-  // Motor_L(-speedM);
-  // Motor_R(speedM);
-  // delay(70);
+  Motor_L(-speedM);
+  Motor_R(speedM);
+  delay(70);
   if (invertedLine)
   {
     do
@@ -525,21 +527,21 @@ void lineTurnLeft(int speedM)
 
 void lineTurnRight(int speedM)
 {
-  if (NumSensor < 7)
+  if (NumSensor < 8)
   {
     return;
   }
 
-  // Motor_L(speedM);
-  // Motor_R(-speedM);
-  // delay(70);
+  Motor_L(speedM);
+  Motor_R(-speedM);
+  delay(70);
   if (invertedLine)
   {
     do
     {
       Motor_L(speedM);
       Motor_R(-speedM);
-    } while (analogRead(sensorPin[6]) < (Sensor_Max[6] + Sensor_Min[6]) / 2);
+    } while (analogRead(sensorPin[7]) < (Sensor_Max[7] + Sensor_Min[7]) / 2);
   }
   else
   {
@@ -547,7 +549,7 @@ void lineTurnRight(int speedM)
     {
       Motor_L(speedM);
       Motor_R(-speedM);
-    } while (analogRead(sensorPin[6]) > (Sensor_Max[6] + Sensor_Min[6]) / 2);
+    } while (analogRead(sensorPin[7]) > (Sensor_Max[7] + Sensor_Min[7]) / 2);
   }
   Motor_L(0);
   Motor_R(0);
@@ -574,6 +576,8 @@ void readSensor()
       Serial.print(analogRead(sensorPin[5]));
       Serial.print(", ");
       Serial.print(analogRead(sensorPin[6]));
+      Serial.print(", ");
+      Serial.print(analogRead(sensorPin[7]));
     }
 
     Serial.println(" ");

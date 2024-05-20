@@ -3,7 +3,7 @@
 void setup()
 {
   EasyKids_Setup();
-  sensorNum(7); // Only 2 & 7 available
+  sensorNum(8); // Only 2 & 8 available
   blackLine();
 }
 
