@@ -6,7 +6,7 @@
 
   EasyKids_Setup();
 
-  sensorNum(8); // Only 2 & 8 available
+  sensorNum(8); // Only 2, 7 & 8 available
 
   // Example: 2 Sensors
   sensorNum(2);
@@ -39,7 +39,7 @@ void setup()
 {
   EasyKids_Setup();
 
-  sensorNum(8); // Only 2 & 8 available
+  sensorNum(8); // Only 2, 7 & 8 available
   blackLine();
 
   setSensorMin(0, 0, 0, 0, 0, 0, 0, 0);
