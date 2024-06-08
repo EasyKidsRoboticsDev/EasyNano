@@ -240,7 +240,6 @@ void blackLine()
 {
   invertedLine = false;
 }
-
 int getPostion()
 {
   bool onLine = false; // Check if robot still on line (Atleast 1 sensor)
@@ -279,6 +278,7 @@ int getPostion()
 
   if (!onLine)
   {
+   // lastPosition = 50;
     if (lastPosition >= ((NumSensor - 1) * 100) / 2)  // Black line
     {
       lastPosition = (NumSensor - 1) * 100; // Middle value
@@ -294,6 +294,60 @@ int getPostion()
   }
   return round(((NumSensor - 1) * 100) - lastPosition);
 }
+int getPostion2()
+{
+  bool onLine = false; // Check if robot still on line (Atleast 1 sensor)
+  unsigned int avg = 0;
+  unsigned int sum = 0;
+
+  for (int i = 0; i < NumSensor; i++)
+  {
+    int value = 0;
+
+    value = clamp(map(analogRead(sensorPin[i]), Sensor_Min[i], Sensor_Max[i], 1, 100), 1, 100);
+    if (invertedLine) // White line
+    {
+      value = 101 - value;
+    }
+
+    if (value < 20)
+    {
+      onLine = true;
+      avg += value * (i * 100);
+      sum += value;
+    }
+
+    // Serial.print(value);
+    // Serial.print(" / ");
+  }
+  // Serial.println("");
+
+  // Serial.print(avg);
+  // Serial.print(" / ");
+  //  Serial.print(sum);
+  // Serial.print(" / ");
+  //  Serial.print(avg / sum);
+  // Serial.print(" / ");
+  //  Serial.println(onLine);
+
+  if (!onLine)
+  {
+    lastPosition = 50;
+    // if (lastPosition >= ((NumSensor - 1) * 100) / 2)  // Black line
+    // {
+    //   lastPosition = (NumSensor - 1) * 100; // Middle value
+    // }
+    // else
+    // {
+    //   lastPosition = 0;
+    // }
+  }
+  else
+  {
+    lastPosition = (avg / sum);
+  }
+  return round(((NumSensor - 1) * 100) - lastPosition);
+}
 
 void lineFollow(int min_speed, float iKP, float iKD)
 {
@@ -302,12 +356,29 @@ void lineFollow(int min_speed, float iKP, float iKD)
   iKD = iKD / 10;
 
   errors = (getPostion() - setPoint);
-  Serial.println(getPostion());
+  //Serial.println(getPostion());
   output = (iKP * errors) + (iKD * (errors - previous_error));
   previous_error = errors;
   leftMotor = clamp(min_speed - output, -100, 100);
   rightMotor = clamp(min_speed + output, -100, 100);
+  //Serial.println(output); 
+  Motor_L(leftMotor);
+  Motor_R(rightMotor);
+}
 
+void lineFollow2(int min_speed, float iKP, float iKD)
+{
+
+  iKP = iKP / 10;
+  iKD = iKD / 10;
+
+  errors = (getPostion2() - setPoint);
+  //Serial.println(getPostion());
+  output = (iKP * errors) + (iKD * (errors - previous_error));
+  previous_error = errors;
+  leftMotor = clamp(min_speed - output, -100, 100);
+  rightMotor = clamp(min_speed + output, -100, 100);
+  //Serial.println(output); 
   Motor_L(leftMotor);
   Motor_R(rightMotor);
 }
@@ -325,25 +396,32 @@ void lineTimer(int speed, float iKP, float iKD, long setTime)
   Motor_R(0);
 }
 
+void lineTimer2(int speed, float iKP, float iKD, long setTime)
+{
+  long timeSince = 0;
+  timeSince = millis();
+  while ((millis() - timeSince) < setTime)
+  {
+    lineFollow2(speed, iKP, iKD);
+  }
+  Motor_L(0);
+  Motor_R(0);
+}
+
 void lineCross(int setSpeed, float iKP, float iKD)
 {
-  if (NumSensor < 7)
-  {
-    return;
-  }
+  int rightVal = analogRead(sensorPin[0]);
+  int leftVal = analogRead(sensorPin[NumSensor - 1]);
 
-  int rightVal = analogRead(sensorPin[1]);
-  int leftVal = analogRead(sensorPin[NumSensor - 2]);
-
-  int avgRightVal = (Sensor_Max[1] + Sensor_Min[1]) / 2;
-  int avgLeftVal = (Sensor_Max[NumSensor - 2] + Sensor_Min[NumSensor - 2]) / 2;
+  int avgRightVal = (Sensor_Max[0] + Sensor_Min[0]) / 2;
+  int avgLeftVal = (Sensor_Max[NumSensor - 1] + Sensor_Min[NumSensor - 1]) / 2;
 
   if (invertedLine)
   {
     while (rightVal < avgRightVal || leftVal < avgLeftVal)
     {
-      rightVal = analogRead(sensorPin[1]);
-      leftVal = analogRead(sensorPin[NumSensor - 2]);
+      rightVal = analogRead(sensorPin[0]);
+      leftVal = analogRead(sensorPin[NumSensor - 1]);
       lineFollow(setSpeed, iKP, iKD);
     }
   }
@@ -351,8 +429,41 @@ void lineCross(int setSpeed, float iKP, float iKD)
   {
     while (rightVal > avgRightVal || leftVal > avgLeftVal)
     {
-      rightVal = analogRead(sensorPin[1]);
-      leftVal = analogRead(sensorPin[NumSensor - 2]);
+      rightVal = analogRead(sensorPin[0]);
+      leftVal = analogRead(sensorPin[NumSensor - 1]);
+      lineFollow(setSpeed, iKP, iKD);
+    }
+  }
+  Motor_L(setSpeed);
+  Motor_R(setSpeed);
+  delay(map(setSpeed, 0, 100, 100, 0));
+  Motor_L(0);
+  Motor_R(0);
+}
+
+void lineCross2(int setSpeed, float iKP, float iKD)
+{
+  int rightVal = analogRead(sensorPin[0]);
+  int leftVal = analogRead(sensorPin[NumSensor - 1]);
+
+  int avgRightVal = (Sensor_Max[0] + Sensor_Min[0]) / 2;
+  int avgLeftVal = (Sensor_Max[NumSensor - 1] + Sensor_Min[NumSensor - 1]) / 2;
+
+  if (invertedLine)
+  {
+    while (rightVal < avgRightVal || leftVal < avgLeftVal)
+    {
+      rightVal = analogRead(sensorPin[0]);
+      leftVal = analogRead(sensorPin[NumSensor - 1]);
+      lineFollow2(setSpeed, iKP, iKD);
+    }
+  }
+  else
+  {
+    while (rightVal > avgRightVal || leftVal > avgLeftVal)
+    {
+      rightVal = analogRead(sensorPin[0]);
+      leftVal = analogRead(sensorPin[NumSensor - 1]);
       lineFollow(setSpeed, iKP, iKD);
     }
   }
