@@ -1,3 +1,5 @@
+#include <Servo.h>
+
 #define dir1A 3
 #define dir1B 4
 #define pwm1 5
@@ -9,7 +11,7 @@
 int NumSensor = 8;
 bool invertedLine = false;
 
-int sensorPin[8] = { A0, A1, A2, A3, A4, A5, A6, A7 };
+int sensorPin[8] = {A0, A1, A2, A3, A4, A5, A6, A7};
 int Sensor_Min[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 int Sensor_Max[8] = {1023, 1023, 1023, 1023, 1023, 1023, 1023, 1023};
 
@@ -21,6 +23,10 @@ int output = 0;
 int errors = 0;
 int leftMotor = 0;
 int rightMotor = 0;
+
+Servo servo_1;
+Servo servo_2;
+Servo servo_3;
 
 void EasyKids_Setup()
 {
@@ -43,6 +49,10 @@ void EasyKids_Setup()
   analogWrite(pwm2, 255);
   digitalWrite(dir2A, HIGH);
   digitalWrite(dir2B, HIGH);
+
+  servo_1.attach(10);
+  servo_2.attach(11);
+  servo_3.attach(12);
 }
 
 int clamp(int val, int lowerLim, int upperLim)
@@ -126,6 +136,29 @@ void motor(uint8_t pin, int speed)
   else if (pin == 2)
   {
     Motor_R(speed);
+  }
+}
+
+void servo(uint8_t pin, int angle)
+{
+  angle = min(max(angle, 0), 180);
+
+  switch (pin)
+  {
+    case 10:
+      servo_1.write(angle);
+      break;
+    
+    case 11:
+      servo_2.write(angle);
+      break;
+
+    case 12:
+      servo_3.write(angle);
+      break;
+
+    default:
+      break;
   }
 }
 
@@ -279,14 +312,7 @@ int getPostion()
 
   if (!onLine)
   {
-    if (lastPosition >= ((NumSensor - 1) * 100) / 2)  // Black line
-    {
-      lastPosition = (NumSensor - 1) * 100; // Middle value
-    }
-    else
-    {
-      lastPosition = 0;
-    }
+    lastPosition = 50;
   }
   else
   {
@@ -583,7 +609,7 @@ void readSensor()
       Serial.print(", ");
       Serial.print(analogRead(sensorPin[7]));
     }
-    
+
     Serial.println(" ");
     delay(50);
   }
