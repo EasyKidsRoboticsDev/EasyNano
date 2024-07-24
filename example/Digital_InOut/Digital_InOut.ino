@@ -9,6 +9,6 @@ void loop()
 {
   Serial.print(digitalIn(11)); // Normal input
   Serial.print(" ");
-  Serial.println(digitalIn_Pullup(9)); // Pullup_input
+  Serial.println(digitalIn(9, PULLUP)); // Pullup_input
   digitalOut(2, HIGH);
 }

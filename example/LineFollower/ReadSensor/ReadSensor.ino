@@ -1,13 +1,18 @@
 #include <EasyNano.h>
 
+/*
+  <<<<< Command >>>>>
+  readSensor(time_delay); // default: 100ms
+*/
+
 void setup()
 {
-  EasyKids_Setup();
-  sensorNum(8); // Only 2, 7 & 8 available
+  LineFollower_Setup();
+  sensorNum(8); // 2-8 sensors
   blackLine();
 }
 
 void loop()
 {
-  readSensor(); // Show sensor value via serial monitor
+  readSensor(200); // Show sensor value via serial monitor with 200ms delay
 }
