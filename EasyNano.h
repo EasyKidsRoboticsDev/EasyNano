@@ -13,7 +13,8 @@
 #define DIR_2B 8
 #define PWM_2 6
 
-#define START_SW 9
+#define START_SW 2
+#define Dip_SW 9
 
 uint8_t NumSensor = 8;
 bool invertedLine = false;
@@ -42,6 +43,7 @@ void EasyKids_Setup()
   pinMode(PWM_2, OUTPUT);
 
   pinMode(START_SW, INPUT_PULLUP);
+  pinMode(Dip_SW, INPUT_PULLUP);
 
   // Stop motors
   analogWrite(PWM_1, 255);
